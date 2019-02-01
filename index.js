@@ -14,6 +14,7 @@ morgan.token('requestobject', (req, res) => {
 //app.use(morgan('tiny'))
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :requestobject'))
 app.use(cors())
+app.use(express.static('build'))
 
 
  let persons = [
@@ -39,15 +40,16 @@ app.use(cors())
     }
   ]
 
-app.get('/', (req, res) => {
+app.get('/api', (req, res) => {
   res.send('<h1>Puhelinluettelo</h1>')
 })
 
-app.get('/persons', (req, res) => {
+app.get('/api/persons', (req, res) => {
+  console.log('pyydettiin persons')
   res.json(persons)
 })
 
-app.post('/persons', (request, response) => {
+app.post('/api/persons', (request, response) => {
   const person = request.body
   //console.log('person to add', person)
   //console.log('person name', person.name, ' person number', person.number)
@@ -78,12 +80,12 @@ app.post('/persons', (request, response) => {
   response.json(person)
 })
 
-app.get('/info', (req, res) => {
+app.get('/api/info', (req, res) => {
     let d = new Date()  
     res.send(`Puhelinluettelossa on ${persons.length} henkilön tiedot <br/> ${d}`)
   })
 
-app.get('/persons/:id', (req, res) => {
+app.get('/api/persons/:id', (req, res) => {
     console.log('persons get id:', req.params.id)
     const id = Number(req.params.id)
     const person = persons.find(p => p.id === id)
@@ -95,7 +97,7 @@ app.get('/persons/:id', (req, res) => {
     
 })
 
-app.delete('/persons/:id', (request, response) => {
+app.delete('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id);
     person = persons.filter(p => p.id !== id); 
     response.status(204).end();
