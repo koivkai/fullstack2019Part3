@@ -48,7 +48,7 @@ app.get('/api', (req, res) => {
 })
 
 app.get('/api/persons', (req, res) => {
-  console.log('pyydettiin persons')
+  //console.log('pyydettiin persons')
   Contact.find({}).then(returnedPersons => {
     res.json(returnedPersons.map(person => person.toJSON()))
   })
@@ -121,6 +121,21 @@ app.get('/api/persons/:id', (req, res, next) => {
     //     res.status(404).end()
     // }
     
+})
+
+app.put('/api/persons/:id', (req, res, next) => {
+  const personToUpdate = req.body
+
+  const person = {
+    name: personToUpdate.name,
+    number: personToUpdate.number,
+  }
+
+  Contact.findByIdAndUpdate(req.params.id, person, { new: true })
+    .then(updatedPerson => {
+      res.json(updatedPerson.toJSON())
+    })
+    .catch(error => next(error))
 })
 
 app.delete('/api/persons/:id', (req, res, next) => {
