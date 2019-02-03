@@ -1,4 +1,6 @@
-require('dotenv').config()
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+}
 const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
@@ -30,7 +32,7 @@ app.get('/api/persons', (req, res) => {
   })
 })
 
-app.post('/api/persons', (req, res) => {
+app.post('/api/persons', (req, res, next) => {
   const person = req.body
 
   
@@ -52,25 +54,14 @@ app.post('/api/persons', (req, res) => {
     number: person.number
   })
 
-  newPerson.save().then(savedPerson => {
-    res.json(savedPerson.toJSON())
+  newPerson.save()
+  .then(savedPerson => {
+    return savedPerson.toJSON()
   })
-
-  //console.log('persons sisältö ', persons)
-  //let found = persons.find(p => p.name !== persons.name)
-  //console.log('löytyy henkilö ', found)
-  //console.log('löytyy jo luettelosta?',persons.find(p => p.name === persons.name) === undefined)
-  // if(persons.find(p => p.name === persons.name) !== undefined) {
-  //   return res.status(400).json({
-  //     error: 'name already in contacts'
-  //   })
-  // }
-  // //console.log('päästiin iffien läpi')
-  // const randomID = Math.random() * 10000000000000000
-  // person.id = randomID
-  // persons = persons.concat(person)
-  // //console.log('persons lopuksi',persons)
-  // res.json(person)
+  .then((savedFormatedPerson) => {
+    res.json(savedFormatedPerson)
+  })
+  .catch(error => next(error))
 })
 
 app.get('/api/info', (req, res) => {
@@ -131,7 +122,9 @@ const errorHandler = (error, request, response, next) => {
   
   if (error.name === 'CastError' && error.kind == 'ObjectId') {
     return response.status(400).send({ error: 'malformatted id' })
-  } 
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({error: error.message})
+  }
 
   next(error)
 }
