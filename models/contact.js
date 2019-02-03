@@ -22,7 +22,7 @@ const contactSchema = new mongoose.Schema({
         unique: true
     },
     number: {
-        type: Number,
+        type: String,
         minlength: 8
     }
 })
