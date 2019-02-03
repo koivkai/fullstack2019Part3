@@ -19,30 +19,6 @@ app.use(express.static('build'))
 
 const Contact = require('./models/contact')
 
-
-//  let persons = [
-//     {
-//       "name": "Frodo Baggings",
-//       "number": "040-123456",
-//       "id": 1
-//     },
-//     {
-//       "name": "Sawise Gangee",
-//       "number": "040-123456",
-//       "id": 2
-//     },
-//     {
-//       "name": "Meriadoc Brandybuck",
-//       "number": "040-123456",
-//       "id": 3
-//     },
-//     {
-//       "name": "Peregrin Took",
-//       "number": "040-123456",
-//       "id": 4
-//     }
-//   ]
-
 app.get('/api', (req, res) => {
   res.send('<h1>Puhelinluettelo</h1>')
 })
@@ -66,7 +42,7 @@ app.post('/api/persons', (req, res) => {
     })
   }
   if(person.number === undefined || person.number === '') {
-    return ReadableStream.status(400).json({
+    return res.status(400).json({
       error: 'number missing'
     })
   }
@@ -99,7 +75,10 @@ app.post('/api/persons', (req, res) => {
 
 app.get('/api/info', (req, res) => {
     let d = new Date()  
-    res.send(`Puhelinluettelossa on ${persons.length} henkilön tiedot <br/> ${d}`)
+    Contact.find({}).then(persons => {
+      res.send(`Puhelinluettelossa on ${persons.length} henkilön tiedot <br/> ${d}`)
+    })
+   
   })
 
 app.get('/api/persons/:id', (req, res, next) => {
