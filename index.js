@@ -35,7 +35,7 @@ app.get('/api/persons', (req, res) => {
 app.post('/api/persons', (req, res, next) => {
   const person = req.body
 
-  
+
   //console.log('person to add', person)
   //console.log('person name', person.name, ' person number', person.number)
   if(person.name === undefined || person.name === '') {
@@ -55,22 +55,22 @@ app.post('/api/persons', (req, res, next) => {
   })
 
   newPerson.save()
-  .then(savedPerson => {
-    return savedPerson.toJSON()
-  })
-  .then((savedFormatedPerson) => {
-    res.json(savedFormatedPerson)
-  })
-  .catch(error => next(error))
+    .then(savedPerson => {
+      return savedPerson.toJSON()
+    })
+    .then((savedFormatedPerson) => {
+      res.json(savedFormatedPerson)
+    })
+    .catch(error => next(error))
 })
 
 app.get('/api/info', (req, res) => {
-    let d = new Date()  
-    Contact.find({}).then(persons => {
-      res.send(`Puhelinluettelossa on ${persons.length} henkilön tiedot <br/> ${d}`)
-    })
-   
+  let d = new Date()
+  Contact.find({}).then(persons => {
+    res.send(`Puhelinluettelossa on ${persons.length} henkilön tiedot <br/> ${d}`)
   })
+
+})
 
 app.get('/api/persons/:id', (req, res, next) => {
   Contact.findById(req.params.id).then(person => {
@@ -80,17 +80,17 @@ app.get('/api/persons/:id', (req, res, next) => {
       res.status(404).end()
     }
   })
-  .catch(error => next(error))
+    .catch(error => next(error))
 
-    // console.log('persons get id:', req.params.id)
-    // const id = Number(req.params.id)
-    // const person = persons.find(p => p.id === id)
-    // if(person) {
-    //     res.json(person)
-    // } else {
-    //     res.status(404).end()
-    // }
-    
+  // console.log('persons get id:', req.params.id)
+  // const id = Number(req.params.id)
+  // const person = persons.find(p => p.id === id)
+  // if(person) {
+  //     res.json(person)
+  // } else {
+  //     res.status(404).end()
+  // }
+
 })
 
 app.put('/api/persons/:id', (req, res, next) => {
@@ -109,21 +109,21 @@ app.put('/api/persons/:id', (req, res, next) => {
 })
 
 app.delete('/api/persons/:id', (req, res, next) => {
-    Contact.findByIdAndRemove(req.params.id)
+  Contact.findByIdAndRemove(req.params.id)
     .then(result => {
       res.status(204).end()
     })
     .catch(error => next(error))
-});
+})
 
 const errorHandler = (error, request, response, next) => {
   //console.log('PÄÄSTIIN ERROR HANDLERIIN')
   console.error(error.message)
-  
+
   if (error.name === 'CastError' && error.kind == 'ObjectId') {
     return response.status(400).send({ error: 'malformatted id' })
   } else if (error.name === 'ValidationError') {
-    return response.status(400).json({error: error.message})
+    return response.status(400).json({ error: error.message })
   }
 
   next(error)
